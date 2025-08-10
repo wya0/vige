@@ -55,32 +55,6 @@ vige/
 
 ---
 
-### 快速开始（推荐）
-
-使用 Makefile（后端 + 本地 env 自动生成）：
-
-```bash
-# 启动后端（首次会在 vige-api/vige/local_config.env 写入示例配置）
-make api
-
-# 可选：启动任务队列 Worker
-make worker
-
-# 前端开发（任选其一）
-make web    # vige-web
-make bo     # vige-bo
-make wechat # vige-wechat
-```
-
-使用 Docker（数据库/缓存/后端一键起）：
-
-```bash
-docker-compose up -d postgres redis api
-# API: http://localhost:8000
-```
-
----
-
 ### 后端（vige-api）本地开发
 
 1）安装依赖并进入虚拟环境
