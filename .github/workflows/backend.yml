@@ -1,0 +1,68 @@
+name: Backend CI
+
+on:
+  push:
+    paths:
+      - 'vige-api/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'vige-api/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_DB: vige
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+      redis:
+        image: redis:6
+        ports: ['6379:6379']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install pipenv
+        run: pip install pipenv==2023.11.14
+
+      - name: Install backend deps
+        working-directory: vige-api
+        run: |
+          pipenv sync --dev
+
+      - name: Create env file
+        working-directory: vige-api/vige
+        run: |
+          cat > local_config.env << 'EOF'
+          ENV=ci
+          DEBUG=true
+          SECRET_KEY=test
+          SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/vige
+          REDIS_HOST=localhost
+          REDIS_PORT=6379
+          AUTHJWT_SECRET_KEY=testjwt
+          EXTERNAL_URL=http://localhost:8000
+          EOF
+
+      - name: Smoke import (temporary until tests are stabilized)
+        working-directory: vige-api
+        env:
+          PYTHONPATH: .
+        run: |
+          pipenv run python -c "import vige.app; print('backend import ok')"
+

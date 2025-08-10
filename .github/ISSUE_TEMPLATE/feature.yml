@@ -1,0 +1,16 @@
+name: 功能需求
+description: 提出新的功能或改进建议
+labels: [enhancement]
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: 需求描述
+      description: 你希望实现什么，为什么
+    validations:
+      required: true
+  - type: textarea
+    id: detail
+    attributes:
+      label: 详细方案/补充
+

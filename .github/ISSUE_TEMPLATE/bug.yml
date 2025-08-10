@@ -1,0 +1,28 @@
+name: Bug 报告
+description: 反馈项目中的缺陷
+labels: [bug]
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: 问题描述
+      description: 清晰描述问题现象、预期行为与重现步骤
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      value: |
+        1.
+        2.
+        3.
+  - type: input
+    id: version
+    attributes:
+      label: 版本/提交
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志/截图
+

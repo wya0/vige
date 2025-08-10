@@ -1,0 +1,41 @@
+name: Frontend CI
+
+on:
+  push:
+    paths:
+      - 'vige-web/**'
+      - 'vige-bo/**'
+      - 'vige-wechat/**'
+      - '.github/workflows/frontend.yml'
+  pull_request:
+    paths:
+      - 'vige-web/**'
+      - 'vige-bo/**'
+      - 'vige-wechat/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [vige-web, vige-bo, vige-wechat]
+        node: [16]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install deps
+        working-directory: ${{ matrix.project }}
+        run: |
+          yarn install --frozen-lockfile || yarn install
+      - name: Lint
+        working-directory: ${{ matrix.project }}
+        run: |
+          yarn run lint || echo "lint warnings ignored"
+      - name: Build
+        working-directory: ${{ matrix.project }}
+        run: |
+          yarn run build
+

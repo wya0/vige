@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+coverage/
+
+# Editor/OS
+.DS_Store
+.idea/
+.vscode/
+
+# Env
+.env
+*.env
+vige-api/vige/local_config.env
+
+# Docker
+*.log
+
+.idea
+.idea/
+.DS_Store
+.project

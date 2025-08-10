@@ -1,0 +1,19 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/vige-api"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/vige-web"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/vige-bo"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/vige-wechat"
+    schedule:
+      interval: "weekly"
+
