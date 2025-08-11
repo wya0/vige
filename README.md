@@ -55,6 +55,67 @@ vige/
 
 ---
 
+### Windows 使用说明（Important for Windows Users）
+
+推荐优先使用 Docker Desktop 或 WSL2，原生 Windows 也可运行但需额外准备。
+
+- 推荐：Docker Desktop
+  - 在项目根目录启动依赖与后端（Postgres/Redis/API）：
+    ```bash
+    docker compose up -d
+    ```
+  - 若仅运行后端镜像，参见下文“Docker（后端）”。
+  - 换行符：确保 `vige-api/entrypoint.sh` 为 LF，避免容器内出现 `bash^M` 错误。
+
+- 次选：WSL2（Ubuntu）
+  - 在 WSL2 中按 Linux 步骤执行仓库命令（`make`、`pipenv`、`yarn` 等可直接使用）。
+  - Postgres/Redis 可在 WSL2 内以服务或 Docker 运行。
+
+- 原生 Windows（无需 WSL/Docker）
+  - 后端（替代 Makefile 命令）：
+    ```bash
+    cd vige\vige-api
+    pipenv install --dev
+    # 初始化数据库（需本机或 Docker 提供 Postgres/Redis）
+    pipenv run alembic upgrade head
+    # 启动 API
+    pipenv run uvicorn vige.app:app --reload --port 8000
+    # 启动任务队列（可选）
+    pipenv run huey_consumer -w 2 vige.huey_app.huey
+    ```
+  - 依赖服务：
+    - Postgres：建议用 Docker 官方镜像或 Windows 安装包。
+    - Redis：官方无原生 Windows 版，建议用 Docker 容器或在 WSL2 中运行。
+    - 使用 Docker 启动依赖示例：
+      ```bash
+      docker run -d --name vige-postgres -p 5432:5432 \
+        -e POSTGRES_DB=vige -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres postgres:14
+      docker run -d --name vige-redis -p 6379:6379 redis:6
+      ```
+    - 本地配置示例（`vige-api/vige/local_config.env`）：
+      ```env
+      SQLALCHEMY_DATABASE_URI=postgresql://postgres:postgres@localhost:5432/vige
+      REDIS_HOST=localhost
+      REDIS_PORT=6379
+      EXTERNAL_URL=http://127.0.0.1:8000
+      ```
+  - 前端：
+    ```bash
+    cd vige\vige-web    && yarn install && yarn dev
+    cd vige\vige-bo     && yarn install && yarn dev
+    cd vige\vige-wechat && yarn install && yarn dev
+    ```
+  - 常见问题：
+    - Git 换行符：建议关闭自动 CRLF 或为脚本强制 LF。
+      ```bash
+      git config core.autocrlf false
+      # 或在 .gitattributes 中添加：
+      # *.sh text eol=lf
+      ```
+    - 部分 Python 依赖在 Windows 可能需要构建工具（如 psycopg2、lxml、cryptography、pymupdf、soundfile）。安装失败时优先改用 Docker/WSL2，或安装 Microsoft C++ Build Tools 后重试。
+
+---
+
 ### 后端（vige-api）本地开发
 
 1）安装依赖并进入虚拟环境
