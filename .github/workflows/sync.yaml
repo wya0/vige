@@ -25,9 +25,9 @@ jobs:
               with:
                   target_repo_token: ${{ secrets.GITHUB_TOKEN }} # 使用Github自动生成的Token
                   
-                  upstream_sync_repo: beilunyang/moemail # 替换为上游仓库，如：torvalds/linux
-                  upstream_sync_branch: main
-                  target_sync_branch: main
+                  upstream_sync_repo: Versus2017/vige # 替换为上游仓库，如：torvalds/linux
+                  upstream_sync_branch: master
+                  target_sync_branch: master
                   
                   test_mode: false
 
@@ -43,4 +43,5 @@ jobs:
                   echo "2. Merge conflicts that need manual resolution"
                   echo "3. Network issues"
                   echo "Please check the logs and consider manual sync if needed."
+
                   exit 1
