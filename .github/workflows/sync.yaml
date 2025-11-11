@@ -1,0 +1,46 @@
+name: Sync Fork
+
+permissions:
+    contents: write
+
+on:
+    schedule:
+        - cron: '0 16 * * *' # 每天UTC时间16点（即北京时间凌晨0点）同步一次
+    workflow_dispatch:  # 允许手动触发
+
+jobs:
+    sync_with_upstream:
+        name: Sync with Upstream
+        runs-on: ubuntu-latest
+        if: ${{ github.event.repository.fork }}
+
+        steps:
+            - name: Checkout target repo
+              uses: actions/checkout@v4
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Sync Upstream
+              uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
+              with:
+                  target_repo_token: ${{ secrets.GITHUB_TOKEN }} # 使用Github自动生成的Token
+                  
+                  upstream_sync_repo: beilunyang/moemail # 替换为上游仓库，如：torvalds/linux
+                  upstream_sync_branch: main
+                  target_sync_branch: main
+                  
+                  test_mode: false
+
+            - name: Check for new commits
+              if: success()
+              run: echo "Sync completed successfully"
+
+            - name: Check for Failure
+              if: failure()
+              run: |
+                  echo "[Error] Sync failed. This might be due to:"
+                  echo "1. Changes in the upstream workflow file"
+                  echo "2. Merge conflicts that need manual resolution"
+                  echo "3. Network issues"
+                  echo "Please check the logs and consider manual sync if needed."
+                  exit 1
